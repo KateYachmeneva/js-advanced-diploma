@@ -30,15 +30,28 @@ export default class GamePlay {
     this.checkBinding();
 
     this.container.innerHTML = `
-      <div class="controls">
-        <button data-id="action-restart" class="btn">New Game</button>
-        <button data-id="action-save" class="btn">Save Game</button>
-        <button data-id="action-load" class="btn">Load Game</button>
+    <div class="controls">
+    <button data-id="action-restart" class="btn">New Game</button>
+    <button data-id="action-save" class="btn">Save Game</button>
+    <button data-id="action-load" class="btn">Load Game</button>
+  </div>
+  <div class="statistics">
+    <div class="row">
+      <div class="level-container">
+        <p class="level-description">Level: <span class="level-value"></span></p>
       </div>
-      <div class="board-container">
-        <div data-id="board" class="board"></div>
+      <div class="score-container">
+         <p class="score-description">Score: <span class="score-value"></span></p>   
       </div>
-    `;
+      <div class="record">
+         <p class="record-description">Record: <span class="record-value"></span></p>   
+      </div>
+    </div>
+  </div>
+  <div class="board-container">
+    <div data-id="board" class="board"></div>
+  </div>
+`;
 
     this.newGameEl = this.container.querySelector('[data-id=action-restart]');
     this.saveGameEl = this.container.querySelector('[data-id=action-save]');
@@ -61,6 +74,15 @@ export default class GamePlay {
     }
 
     this.cells = Array.from(this.boardEl.children);
+
+    // Контейнер с тултипами
+    this.renderContainerTooltip();
+  }
+
+  renderContainerTooltip() {
+    const containerTooltips = document.createElement('div');
+    containerTooltips.classList.add('tooltips-container');
+    this.container.appendChild(containerTooltips);
   }
 
   /**
@@ -227,5 +249,44 @@ export default class GamePlay {
     if (this.container === null) {
       throw new Error('GamePlay not bind to DOM');
     }
+  }
+
+  unsubscribe() {
+    this.cellClickListeners = [];
+  }
+
+  unsubscribeAllMouseListeners() {
+    this.cellClickListeners = [];
+    this.cellEnterListeners = [];
+    this.cellLeaveListeners = [];
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  showTooltip(title, message, type) {
+    const id = Date.now();
+    const template = `
+  <div class="tooltip-container " data-id="${id}">
+      <div class="tooltip-header">
+        <h3 class="tooltip-title">
+            ${title}
+        </h3>
+      </div>
+      <div class="tooltip-body ${type}">
+        <p class="tooltip-message">
+          ${message}
+        </p>
+      </div>
+  </div>
+  `;
+    const container = document.querySelector('.tooltips-container');
+    container.insertAdjacentHTML('afterbegin', template);
+    setTimeout(() => {
+      const tooltipElement = document.querySelector(`.tooltip-container[data-id="${id}"]`);
+      try {
+        tooltipElement.remove();
+      } catch (e) {
+        console.log('error');
+      }
+    }, 2000);
   }
 }

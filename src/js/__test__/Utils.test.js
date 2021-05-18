@@ -1,4 +1,4 @@
-import { calcTileType, calcHealthLevel } from '../js/utils';
+import { calcTileType, calcHealthLevel } from '../utils';
 
 test.each([
   [0, 'top-left'],

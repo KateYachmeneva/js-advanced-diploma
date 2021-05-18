@@ -5,7 +5,8 @@
  * @param maxLevel max character level
  * @returns Character type children (ex. Magician, Bowman, etc)
  */
-import Character from './Character';
+
+import PositionedCharacter from './PositionedCharacter';
 
 export function* characterGenerator(allowedTypes, maxLevel) {
   while (true) {
@@ -15,47 +16,36 @@ export function* characterGenerator(allowedTypes, maxLevel) {
   }
 }
 
-export function* classGenerator(options) {
-  for (let i = 0; i < options.length; i += 1) {
-    const option = options[i];
-    yield class extends Character {
-      constructor(level) {
-        super(level);
-        this.attack = option.attack;
-        this.defence = option.defence;
-        this.type = option.type;
-        this.atkradius = option.atkradius;
-        this.moveradius = option.moveradius;
-      }
-    };
+export function generateCoordinates(side, boardsize = 8) {
+  const positions = [...Array(boardsize ** 2).keys()];
+  let allowedPositions;
+  if (side === 'player') {
+    allowedPositions = positions.filter((pos) => (pos % boardsize === 0 || pos % boardsize === 1));
+  } else {
+    allowedPositions = positions.filter((pos) => (pos % boardsize === 7 || pos % boardsize === 6));
   }
+  return allowedPositions;
 }
 
-// const options = [
-//   { attack: 25, defence: 25, type: 'Bowman' },
-//   { attack: 40, defence: 10, type: 'Swordsman' },
-//   { attack: 10, defence: 40, type: 'Magician' },
-//   { attack: 25, defence: 25, type: 'Vampire' },
-//   { attack: 40, defence: 10, type: 'Undead' },
-//   { attack: 10, defence: 40, type: 'Daemon' },
-// ];
-// export function increaseLevel(char) {
-//   char.levelUp();
-//   char.level += 1;
-//   char.health = 50;
-// }
-export function generateTeam(allowedTypes, maxLevel, characterCount) {
-  const team = [];
+export function generateTeam(allowedTypes, maxLevel, characterCount, boardSize) {
+  const playerCoordinates = generateCoordinates('player', boardSize);
+  const enemyCoordinates = generateCoordinates('enemy', boardSize);
+  let position;
+  let idx;
+  const teams = [];
   for (let i = 0; i < characterCount; i += 1) {
     const char = characterGenerator(allowedTypes, maxLevel).next().value;
-    if (maxLevel === 1) { allowedTypes.splice(2); }
-    team.push(char);
+    if (char.isPlayer) {
+      idx = Math.floor(Math.random() * playerCoordinates.length);
+      position = playerCoordinates[idx];
+      playerCoordinates.slice(idx, 1);
+    } else {
+      idx = Math.floor(Math.random() * enemyCoordinates.length);
+      position = enemyCoordinates[idx];
+      enemyCoordinates.slice(idx, 1);
+    }
+    teams.push(new PositionedCharacter(char, position));
   }
-  return team;
+  return teams;
   // TODO: write logic here
 }
-// const options = [{ attack: 40, defence: 10, type: 'swordsman' }];
-// const type = [...classGenerator(options)];
-// const char = [...characterGenerator(type, 1)];
-// console.log(type);
-// console.log(char);

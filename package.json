@@ -1,7 +1,7 @@
 {
   "name": "js-advanced-diploma",
   "version": "1.0.0",
-  "description": "Вы неплохо овладели не только продвинутыми возможностями JS, но и инфраструктурными инструментами. И вам поручили первый проект: разработать небольшую пошаговую игру.",
+  "description": "diplom",
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server --mode development",
@@ -19,7 +19,7 @@
     "url": "git+https://github.com/KateYachmeneva/js-advanced-diploma.git"
   },
   "author": "KateYachmeneva",
-  "license": "MIT",
+  "license": "ISC",
   "bugs": {
     "url": "https://github.com/KateYachmeneva/js-advanced-diploma/issues"
   },
@@ -42,7 +42,7 @@
     "url-loader": "^4.1.1",
     "webpack": "^4.46.0",
     "webpack-cli": "^3.3.11",
-    "webpack-dev-server": "^3.11.2"
+    "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {
     "@jest/globals": "^26.6.2",
